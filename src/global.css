@@ -43,6 +43,62 @@
 	--space-12: 48px;
 }
 
+@theme {
+	/* Backgrounds */
+	--color-background: var(--background);
+
+	/* Surfaces */
+	--color-surface: var(--surface);
+	--color-surface-input: var(--surface-input);
+	--color-surface-elevated: var(--surface-elevated);
+	--color-surface-hover: var(--surface-hover);
+
+	/* Text */
+	--color-foreground: var(--foreground);
+	--color-muted: var(--muted-foreground);
+	--color-subtle: var(--subtle-foreground);
+
+	/* Fonts */
+	--font-sans: 'Geist', sans-serif;
+	--font-mono: 'JetBrains Mono', monospace;
+
+	/* Borders */
+	--color-border: var(--border);
+	--color-border-subtle: var(--border-subtle);
+	--color-border-focus: var(--border-focus);
+
+	/* Actions */
+	--color-primary: var(--primary);
+	--color-primary-foreground: var(--primary-foreground);
+	--color-primary-hover: var(--primary-hover);
+
+	/* Destructive */
+	--color-destructive: var(--destructive);
+	--color-destructive-hover: var(--destructive-hover);
+
+	/* Radius */
+	--radius-sm: var(--radius-sm);
+	--radius-md: var(--radius);
+	--radius-lg: var(--radius-lg);
+
+	/* Spacing */
+	--spacing-space-1: var(--space-1);
+	--spacing-space-2: var(--space-2);
+	--spacing-space-3: var(--space-3);
+	--spacing-space-4: var(--space-4);
+	--spacing-space-6: var(--space-6);
+	--spacing-space-8: var(--space-8);
+	--spacing-space-12: var(--space-12);
+}
+
+:focus-visible {
+	outline: none;
+}
+::selection {
+	background: var(--surface-hover);
+	color: var(--foreground);
+}
+
 * {
 	box-sizing: border-box;
 }
@@ -51,8 +107,9 @@ body {
 	margin: 0;
 	background: var(--background);
 	color: var(--foreground);
-	font-family: 'Geist', sans-serif;
+	font-family: var(--font-sans);
 	-webkit-font-smoothing: antialiased;
+	text-rendering: optimizeLegibility;
 }
 
 button,
