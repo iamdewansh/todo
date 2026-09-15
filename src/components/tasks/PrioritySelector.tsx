@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { ChevronDown } from 'lucide-react';
-
-export type Priority = 'low' | 'medium' | 'high';
+import type { Priority } from '@/types/tasks';
 
 interface PrioritySelectorProps {
    value: Priority;

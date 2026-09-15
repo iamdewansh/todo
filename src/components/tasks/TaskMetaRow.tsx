@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import PrioritySelector from './PrioritySelector';
+import type { Priority } from '@/types/tasks';
 
 export default function TaskMetaRow() {
-   const [priority, setPriority] = useState<'low' | 'medium' | 'high'>('medium');
+   const [priority, setPriority] = useState<Priority>('medium');
 
    return (
       <div

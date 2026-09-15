@@ -1,10 +1,10 @@
-import type { Priority } from './PrioritySelector.tsx';
+import type { Priority } from '@/types/tasks.ts';
 
 interface PriorityBadgeProps {
    priority: Priority;
 }
 
-const styles = {
+const styles: Record<Priority, { text: string; bg: string; border: string }> = {
    low: {
       text: 'text-priority-low',
       bg: 'bg-priority-low-bg',
