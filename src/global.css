@@ -2,118 +2,117 @@
 @import 'tailwindcss';
 
 :root {
-	/* Backgrounds */
-	--background: #09090b;
-	--surface: #131315;
-	--surface-input: #121215;
-	--surface-elevated: #18181b;
-	--surface-hover: #27272a;
+   /* Backgrounds */
+   --background: #09090b;
+   --surface: #131315;
+   --surface-input: #121215;
+   --surface-elevated: #18181b;
+   --surface-hover: #27272a;
 
-	/* Text */
-	--foreground: #fafafa;
-	--muted-foreground: #a1a1aa;
-	--subtle-foreground: #71717a;
+   /* Text */
+   --foreground: #fafafa;
+   --muted-foreground: #a1a1aa;
+   --subtle-foreground: #71717a;
 
-	/* Borders */
-	--border: #27272a;
-	--border-subtle: rgba(39, 39, 42, 0.6);
-	--border-focus: #a1a1aa;
+   /* Borders */
+   --border: #27272a;
+   --border-subtle: rgba(39, 39, 42, 0.6);
+   --border-focus: #a1a1aa;
 
-	/* Primary */
-	--primary: #fafafa;
-	--primary-foreground: #09090b;
-	--primary-hover: #e4e4e7;
+   /* Primary */
+   --primary: #fafafa;
+   --primary-foreground: #09090b;
+   --primary-hover: #e4e4e7;
 
-	/* Destructive */
-	--destructive: #f87171;
-	--destructive-hover: #450a0a;
+   /* Destructive */
+   --destructive: #f87171;
+   --destructive-hover: #450a0a;
 
-	/* Radius */
-	--radius-sm: 4px;
-	--radius: 6px;
-	--radius-lg: 8px;
+   /* Radius */
+   --radius-sm: 4px;
+   --radius: 6px;
+   --radius-lg: 8px;
 
-	/* Spacing */
-	--space-1: 4px;
-	--space-2: 8px;
-	--space-3: 12px;
-	--space-4: 16px;
-	--space-6: 24px;
-	--space-8: 32px;
-	--space-12: 48px;
+   /* Spacing */
+   --space-1: 4px;
+   --space-2: 8px;
+   --space-3: 12px;
+   --space-4: 16px;
+   --space-6: 24px;
+   --space-8: 32px;
+   --space-12: 48px;
 }
 
 @theme {
-	/* Backgrounds */
-	--color-background: var(--background);
+   /* Backgrounds */
+   --color-background: var(--background);
 
-	/* Surfaces */
-	--color-surface: var(--surface);
-	--color-surface-input: var(--surface-input);
-	--color-surface-elevated: var(--surface-elevated);
-	--color-surface-hover: var(--surface-hover);
+   /* Surfaces */
+   --color-surface: var(--surface);
+   --color-surface-input: var(--surface-input);
+   --color-surface-elevated: var(--surface-elevated);
+   --color-surface-hover: var(--surface-hover);
 
-	/* Text */
-	--color-foreground: var(--foreground);
-	--color-muted: var(--muted-foreground);
-	--color-subtle: var(--subtle-foreground);
+   /* Text */
+   --color-foreground: var(--foreground);
+   --color-muted: var(--muted-foreground);
+   --color-subtle: var(--subtle-foreground);
 
-	/* Fonts */
-	--font-sans: 'Geist', sans-serif;
-	--font-mono: 'JetBrains Mono', monospace;
+   /* Fonts */
+   --font-sans: 'Geist', sans-serif;
+   --font-mono: 'JetBrains Mono', monospace;
 
-	/* Borders */
-	--color-border: var(--border);
-	--color-border-subtle: var(--border-subtle);
-	--color-border-focus: var(--border-focus);
+   /* Borders */
+   --color-border: var(--border);
+   --color-border-subtle: var(--border-subtle);
+   --color-border-focus: var(--border-focus);
 
-	/* Actions */
-	--color-primary: var(--primary);
-	--color-primary-foreground: var(--primary-foreground);
-	--color-primary-hover: var(--primary-hover);
+   /* Actions */
+   --color-primary: var(--primary);
+   --color-primary-foreground: var(--primary-foreground);
+   --color-primary-hover: var(--primary-hover);
 
-	/* Destructive */
-	--color-destructive: var(--destructive);
-	--color-destructive-hover: var(--destructive-hover);
+   /* Destructive */
+   --color-destructive: var(--destructive);
+   --color-destructive-hover: var(--destructive-hover);
 
-	/* Radius */
-	--radius-sm: var(--radius-sm);
-	--radius-md: var(--radius);
-	--radius-lg: var(--radius-lg);
+   /* Radius */
+   --radius-sm: var(--radius-sm);
+   --radius-md: var(--radius);
+   --radius-lg: var(--radius-lg);
 
-	/* Spacing */
-	--spacing-space-1: var(--space-1);
-	--spacing-space-2: var(--space-2);
-	--spacing-space-3: var(--space-3);
-	--spacing-space-4: var(--space-4);
-	--spacing-space-6: var(--space-6);
-	--spacing-space-8: var(--space-8);
-	--spacing-space-12: var(--space-12);
+   /* Spacing */
+   --spacing-space-1: var(--space-1);
+   --spacing-space-2: var(--space-2);
+   --spacing-space-3: var(--space-3);
+   --spacing-space-4: var(--space-4);
+   --spacing-space-6: var(--space-6);
+   --spacing-space-8: var(--space-8);
+   --spacing-space-12: var(--space-12);
 }
 
 :focus-visible {
-	outline: none;
+   outline: none;
 }
 ::selection {
-	background: var(--surface-hover);
-	color: var(--foreground);
+   background: var(--surface-hover);
+   color: var(--foreground);
 }
 
 * {
-	box-sizing: border-box;
+   box-sizing: border-box;
 }
 
 body {
-	margin: 0;
-	background: var(--background);
-	color: var(--foreground);
-	font-family: var(--font-sans);
-	-webkit-font-smoothing: antialiased;
-	text-rendering: optimizeLegibility;
+   margin: 0;
+   background: var(--background);
+   color: var(--foreground);
+   font-family: var(--font-sans);
+   -webkit-font-smoothing: antialiased;
+   text-rendering: optimizeLegibility;
 }
 
 button,
 input {
-	font: inherit;
+   font: inherit;
 }
-
