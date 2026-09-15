@@ -41,6 +41,16 @@
    --space-6: 24px;
    --space-8: 32px;
    --space-12: 48px;
+
+   /* Priority Colors */
+   --priority-high: #ef4444;
+   --priority-medium: #f59e0b;
+   --priority-low: #22c55e;
+
+   /* Faded Badge Backgrounds */
+   --priority-high-bg: rgba(239, 68, 68, 0.12);
+   --priority-medium-bg: rgba(245, 158, 11, 0.12);
+   --priority-low-bg: rgba(34, 197, 94, 0.12);
 }
 
 @theme {
@@ -89,6 +99,34 @@
    --spacing-space-6: var(--space-6);
    --spacing-space-8: var(--space-8);
    --spacing-space-12: var(--space-12);
+
+   --color-priority-high: var(--priority-high);
+   --color-priority-medium: var(--priority-medium);
+   --color-priority-low: var(--priority-low);
+
+   --color-priority-high-bg: var(--priority-high-bg);
+   --color-priority-medium-bg: var(--priority-medium-bg);
+   --color-priority-low-bg: var(--priority-low-bg);
+}
+
+@layer components {
+   .meta-button {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      height: 36px;
+      padding-inline: 12px;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--muted-foreground);
+      font-size: 14px;
+      transition: background-color 150ms ease;
+   }
+
+   .meta-button:hover {
+      background: var(--surface-hover);
+   }
 }
 
 :focus-visible {
