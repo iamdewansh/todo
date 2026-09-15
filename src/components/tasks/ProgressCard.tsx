@@ -2,7 +2,7 @@ export default function ProgressCard() {
    return (
       <div
          className="
-        w-55
+        w-full sm:w-55
         rounded-lg
         border border-border
         bg-surface-elevated

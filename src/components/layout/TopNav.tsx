@@ -3,7 +3,7 @@ import { Settings2, User, CheckSquare } from 'lucide-react';
 export default function TopNav() {
    return (
       <header className="border-b border-border">
-         <div className="mx-auto flex h-12 items-center justify-between px-6">
+         <div className="mx-auto flex h-12 items-center justify-between px-4 sm:px-6">
             {/* Left */}
             <div className="flex items-center gap-2">
                <CheckSquare size={16} className="text-foreground" />
@@ -12,12 +12,12 @@ export default function TopNav() {
 
                <span
                   className="rounded-sm
-                                    border border-border
-                                    px-1.5 py-0.5
-                                    font-mono
-                                    text-[10px]
-                                    text-subtle
-                                    "
+                           border border-border
+                           px-1.5 py-0.5
+                           font-mono
+                           text-[10px]
+                           text-subtle
+                           "
                >
                   v1.0
                </span>
@@ -27,14 +27,14 @@ export default function TopNav() {
             <div className="flex items-center gap-2">
                <button
                   className="rounded-sm
-                                    border border-border
-                                    px-2 py-1
-                                    font-mono
-                                    text-[11px]
-                                    text-muted
-                                    transition-colors
-                                    hover:bg-surface-hover
-                                    "
+                              border border-border
+                              px-2 py-1
+                              font-mono
+                              text-[11px]
+                              text-muted
+                              transition-colors
+                              hover:bg-surface-hover
+                              "
                >
                   ⌘K
                </button>
