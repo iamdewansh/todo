@@ -26,35 +26,21 @@ export default function TopNav() {
             {/* Right */}
             <div className="flex items-center gap-2">
                <button
-                  className="rounded-sm
-                              border border-border
-                              px-2 py-1
-                              font-mono
-                              text-[11px]
-                              text-muted
-                              transition-colors
-                              hover:bg-surface-hover
-                              "
-               >
-                  ⌘K
-               </button>
-
-               <button
                   className="flex h-8 w-8 items-center justify-center
-                                    rounded-md
-                                    text-muted
-                                    transition-colors
-                                    hover:bg-surface-hover
-                                    "
+                           rounded-md
+                           text-muted
+                           transition-colors
+                           hover:bg-surface-hover
+                           "
                >
                   <Settings2 size={15} />
                </button>
 
                <button
                   className="flex h-8 w-8 items-center justify-center
-                                    rounded-full
-                                    border border-border
-                                    "
+                           rounded-full
+                           border border-border
+                           "
                >
                   <User size={14} />
                </button>
