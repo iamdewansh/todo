@@ -33,7 +33,14 @@ const login = asyncHandler(async (req, res) => {
 
 	const response = await fetch(
 		`https://${process.env.SUPABASE_PROJECT}.supabase.co/auth/v1/token?grant_type=password`,
-		{ method: 'POST', body: JSON.stringify({ email, password }) },
+		{
+			method: 'POST',
+			headers: {
+				apikey: process.env.SUPABASE_PUBLISHABLE_KEY!,
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({ email, password }),
+		},
 	);
 	if (!response.ok) {
 		throw new ApiError(401, 'Invalid Credentials');
