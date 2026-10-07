@@ -49,4 +49,6 @@ const login = asyncHandler(async (req, res) => {
 	res.json(new ApiResponse(200, data, 'Logged in Successfully'));
 });
 
+const logout = asyncHandler(async (req, res) => {});
+
 export { signUp, login };
