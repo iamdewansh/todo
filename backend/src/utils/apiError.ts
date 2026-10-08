@@ -1,5 +1,5 @@
 class ApiError extends Error {
-	statusCode: Number;
+	statusCode: number;
 
 	constructor(statusCode = 500, message = 'Server Error', stack = '') {
 		super(message);
