@@ -9,7 +9,7 @@ const signUp = asyncHandler(async (req, res) => {
 		throw new ApiError(400, 'Email or Password is missing');
 	}
 
-	const response = await fetch(`${process.env.SUPABASE_URI}/auth/v1/signup`, {
+	const response = await fetch(`${process.env.SUPABASE_URL}/auth/v1/signup`, {
 		method: 'POST',
 		headers: {
 			apikey: process.env.SUPABASE_PUBLISHABLE_KEY!,
@@ -19,6 +19,7 @@ const signUp = asyncHandler(async (req, res) => {
 	});
 
 	if (!response.ok) {
+		console.log(await response.json());
 		throw new ApiError(400, 'Failed to Signup');
 	}
 	const data = await response.json();
@@ -32,7 +33,7 @@ const login = asyncHandler(async (req, res) => {
 	}
 
 	const response = await fetch(
-		`https://${process.env.SUPABASE_PROJECT}.supabase.co/auth/v1/token?grant_type=password`,
+		`${process.env.SUPABASE_URL}/auth/v1/token?grant_type=password`,
 		{
 			method: 'POST',
 			headers: {
@@ -42,6 +43,7 @@ const login = asyncHandler(async (req, res) => {
 			body: JSON.stringify({ email, password }),
 		},
 	);
+
 	if (!response.ok) {
 		throw new ApiError(401, 'Invalid Credentials');
 	}
@@ -49,6 +51,24 @@ const login = asyncHandler(async (req, res) => {
 	res.json(new ApiResponse(200, data, 'Logged in Successfully'));
 });
 
-const logout = asyncHandler(async (req, res) => {});
+const logout = asyncHandler(async (req, res) => {
+	const { access_token: token } = req.body;
+	if (!token) {
+		throw new ApiError(400, 'Token is missing');
+	}
+	const response = await fetch(`${process.env.SUPABASE_URL}/auth/v1/logout`, {
+		method: 'POST',
+		headers: {
+			apikey: process.env.SUPABASE_PUBLISHABLE_KEY!,
+			Authorization: `Bearer ${token}`,
+		},
+	});
 
-export { signUp, login };
+	if (!response.ok) {
+		throw new ApiError(401, 'Invalid Credentials');
+	}
+
+	res.json(new ApiResponse(200, response.body, 'Logged out Successfully'));
+});
+
+export { signUp, login, logout };
