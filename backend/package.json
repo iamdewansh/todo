@@ -11,6 +11,7 @@
 		"build": "tsc -b"
 	},
 	"dependencies": {
+		"cookie-parser": "^1.4.7",
 		"cors": "^2.8.6",
 		"dotenv": "^17.4.2",
 		"express": "^5.2.1",
@@ -25,5 +26,8 @@
 		"nodemon": "^3.1.14",
 		"supabase": "^2.117.0",
 		"typescript": "^7.0.2"
+	},
+	"allowScripts": {
+		"esbuild@0.28.2": true
 	}
 }
