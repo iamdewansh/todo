@@ -1,7 +1,7 @@
 import ApiError from '../utils/apiError.js';
 import ApiResponse from '../utils/apiResponse.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
-
+import type { CookieOptions } from 'express';
 const signUp = asyncHandler(async (req, res) => {
 	const { email, password } = req.body;
 
@@ -23,7 +23,21 @@ const signUp = asyncHandler(async (req, res) => {
 		throw new ApiError(400, 'Failed to Signup');
 	}
 	const data = await response.json();
-	res.json(new ApiResponse(200, data, 'Signed up Successfully'));
+	const options: CookieOptions = {
+		httpOnly: true,
+		secure: process.env.NODE_ENV === 'production',
+		sameSite: 'lax',
+	};
+
+	res.cookie('accessToken', data.access_token, {
+		...options,
+		maxAge: 60 * 60 * 1000, // 60 minutes
+	});
+	res.cookie('refreshToken', data.refresh_token, {
+		...options,
+		maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+	});
+	res.json(new ApiResponse(200, null, 'Signed up Successfully'));
 });
 
 const login = asyncHandler(async (req, res) => {
