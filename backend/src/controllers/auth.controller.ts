@@ -101,4 +101,36 @@ const logout = asyncHandler(async (req, res) => {
 	res.json(new ApiResponse(200, response.body, 'Logged out Successfully'));
 });
 
-export { signUp, login, logout };
+const refreshAccessToken = asyncHandler(async (req, res) => {
+	const token = req.cookies.refreshToken;
+	if (!token) {
+		throw new ApiError(400, 'Missing token');
+	}
+	const response = await fetch(
+		`${process.env.SUPABASE_URL}/auth/v1/token?grant_type=refresh_token`,
+		{
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				apikey: process.env.SUPABASE_PUBLISHABLE_KEY!,
+			},
+			body: JSON.stringify({ refresh_token: token }),
+		},
+	);
+	if (!response.ok) {
+		throw new ApiError(400, 'Refresh token rejected');
+	}
+
+	const data = await response.json();
+	res.cookie('accessToken', data.access_token, {
+		...options,
+		maxAge: 60 * 60 * 1000, // 60 minutes
+	});
+	res.cookie('refreshToken', data.refresh_token, {
+		...options,
+		maxAge: 24 * 60 * 60 * 1000, // 1 day
+	});
+	res.send(new ApiResponse(200, null, 'Refresh successfull'));
+});
+
+export { signUp, login, logout, refreshAccessToken };
