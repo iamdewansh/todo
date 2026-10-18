@@ -1,5 +1,6 @@
 import { createRemoteJWKSet, jwtVerify } from 'jose';
 import { asyncHandler } from '../utils/asyncHandler.js';
+import ApiError from '../utils/apiError.js';
 
 const verifyToken = asyncHandler(async (req, res, next) => {
 	const projectUrl = process.env.SUPABASE_URL;
@@ -7,7 +8,10 @@ const verifyToken = asyncHandler(async (req, res, next) => {
 	const JKWS = createRemoteJWKSet(
 		new URL(`${projectUrl}/auth/v1/.well-known/jwks.json`),
 	);
-	const token = req.cookies.accessToken;
+	const token = req.cookies?.accessToken;
+	if (!token) {
+		throw new ApiError(400, 'Token missing');
+	}
 	const { payload } = await jwtVerify(token, JKWS, {
 		algorithms: ['ES256'],
 		issuer: `${projectUrl}/auth/v1`,
