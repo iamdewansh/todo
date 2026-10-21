@@ -5,7 +5,7 @@ class ApiError extends Error {
 		super(message);
 		this.statusCode = statusCode;
 
-		if (stack) {
+		if (stack && process.env.NODE_ENV === 'development') {
 			this.stack = stack;
 		} else {
 			Error.captureStackTrace(this, this.constructor);
