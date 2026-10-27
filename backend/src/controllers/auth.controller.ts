@@ -1,9 +1,11 @@
 import ApiError from '../utils/apiError.js';
 import ApiResponse from '../utils/apiResponse.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
+import crypto from 'node:crypto';
 import type { CookieOptions } from 'express';
+import { redisClient } from '../db/redis.js';
 
-const options: CookieOptions = {
+const authCookieOptions: CookieOptions = {
 	httpOnly: true,
 	secure: process.env.NODE_ENV === 'production',
 	sameSite: 'lax',
@@ -32,11 +34,11 @@ const signUp = asyncHandler(async (req, res) => {
 	const data = await response.json();
 
 	res.cookie('accessToken', data.access_token, {
-		...options,
+		...authCookieOptions,
 		maxAge: 60 * 60 * 1000, // 60 minutes
 	});
 	res.cookie('refreshToken', data.refresh_token, {
-		...options,
+		...authCookieOptions,
 		maxAge: 24 * 60 * 60 * 1000, // 1 day
 	});
 	res.json(new ApiResponse(200, null, 'Signed up Successfully'));
@@ -66,11 +68,11 @@ const login = asyncHandler(async (req, res) => {
 	const data = await response.json();
 
 	res.cookie('accessToken', data.access_token, {
-		...options,
+		...authCookieOptions,
 		maxAge: 60 * 60 * 1000, // 60 minutes
 	});
 	res.cookie('refreshToken', data.refresh_token, {
-		...options,
+		...authCookieOptions,
 		maxAge: 24 * 60 * 60 * 1000, // 1 day
 	});
 	res.json(new ApiResponse(200, data, 'Logged in Successfully'));
@@ -123,14 +125,128 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
 
 	const data = await response.json();
 	res.cookie('accessToken', data.access_token, {
-		...options,
+		...authCookieOptions,
 		maxAge: 60 * 60 * 1000, // 60 minutes
 	});
 	res.cookie('refreshToken', data.refresh_token, {
-		...options,
+		...authCookieOptions,
 		maxAge: 24 * 60 * 60 * 1000, // 1 day
 	});
 	res.send(new ApiResponse(200, null, 'Refresh successfull'));
 });
 
-export { signUp, login, logout, refreshAccessToken };
+function randomToken(bytes: number) {
+	return crypto.randomBytes(bytes).toString('base64url');
+}
+
+function createPkce() {
+	const verifier = randomToken(32);
+	const challenge = crypto
+		.createHash('sha256')
+		.update(verifier)
+		.digest('base64url');
+
+	return { verifier, challenge };
+}
+
+const transactionCookieOptions: CookieOptions = {
+	httpOnly: true,
+	secure: process.env.NODE_ENV == 'production',
+	sameSite: 'lax',
+	maxAge: 10 * 60 * 1000,
+};
+
+const loginWithGoogle = asyncHandler(async (req, res) => {
+	const { verifier, challenge } = createPkce();
+	const txnId = randomToken(32);
+
+	console.log('verifier :>> ', verifier);
+	console.log('txnId :>> ', txnId);
+
+	const resu = await redisClient.set(
+		`oauth:${txnId}`,
+		JSON.stringify(verifier),
+		{
+			expiration: {
+				type: 'EX',
+				value: 600,
+			},
+			condition: 'NX',
+		},
+	);
+	console.log('resu :>> ', resu);
+
+	res.cookie('TX_ID', txnId, transactionCookieOptions);
+
+	const params = new URLSearchParams({
+		provider: 'google',
+		redirect_to: `${process.env.BACKEND_URL}/auth/callback`,
+		code_challenge: challenge,
+		code_challenge_method: 's256',
+	});
+	console.log('params :>> ', params);
+	const authUrl = `${process.env.SUPABASE_URL}/auth/v1/authorize?${params.toString()}`;
+	console.log('authUrl :>> ', authUrl);
+	res.redirect(authUrl);
+});
+
+const oauthCallback = asyncHandler(async (req, res) => {
+	const txnId = req.cookies?.TX_ID;
+	const code = req.query?.code;
+
+	console.log('in oauth callback');
+	console.log('txnId :>> ', txnId);
+	console.log('code :>> ', code);
+
+	if (!txnId || typeof code !== 'string') {
+		res.clearCookie('TX_ID', transactionCookieOptions);
+		throw new ApiError(400, 'Invalid OAuth callback');
+	}
+
+	const result = await redisClient.getDel(`oauth:${txnId}`);
+	const verifier = result ? JSON.parse(result) : null;
+	console.log('result :>> ', result);
+	console.log('verifier :>> ', verifier);
+	if (!verifier) {
+		throw new ApiError(400, 'OAuth transaction expired');
+	}
+	res.clearCookie('TX_ID', transactionCookieOptions);
+
+	const tokenResponse = await fetch(
+		`${process.env.SUPABASE_URL}/auth/v1/token?grant_type=pkce`,
+		{
+			method: 'POST',
+			headers: {
+				apikey: process.env.SUPABASE_PUBLISHABLE_KEY!,
+				'content-type': 'application/json',
+			},
+			body: JSON.stringify({ auth_code: code, code_verifier: verifier }),
+		},
+	);
+
+	const tokens = await tokenResponse.json();
+	console.log('tokens :>> ', tokens);
+	if (!tokenResponse.ok || !tokens.access_token || !tokens.refresh_token) {
+		throw new ApiError(401, 'Authentication Failed');
+	}
+
+	res.cookie('accessToken', tokens.access_token, {
+		...authCookieOptions,
+		maxAge: 60 * 60 * 1000, // 60 minutes
+	});
+	res.cookie('refreshToken', tokens.refresh_token, {
+		...authCookieOptions,
+		maxAge: 24 * 60 * 60 * 1000, // 1 day
+	});
+
+	return res.redirect(`${process.env.FRONTEND_URL}`);
+});
+
+export {
+	signUp,
+	login,
+	logout,
+	loginWithGoogle,
+	oauthCallback,
+	refreshAccessToken,
+};
