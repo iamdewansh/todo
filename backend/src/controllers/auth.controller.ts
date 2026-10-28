@@ -194,9 +194,9 @@ const oauthCallback = asyncHandler(async (req, res) => {
 	const txnId = req.cookies?.TX_ID;
 	const code = req.query?.code;
 
-	console.log('in oauth callback');
-	console.log('txnId :>> ', txnId);
-	console.log('code :>> ', code);
+	// console.log('in oauth callback');
+	// console.log('txnId :>> ', txnId);
+	// console.log('code :>> ', code);
 
 	if (!txnId || typeof code !== 'string') {
 		res.clearCookie('TX_ID', transactionCookieOptions);
