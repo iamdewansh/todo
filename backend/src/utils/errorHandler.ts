@@ -4,7 +4,9 @@ const errorHandler: ErrorRequestHandler = async (err, req, res, next) => {
 	let statusCode = err.statusCode || 500;
 	let message = err.message || 'Internal server error';
 
-	console.error(err);
+	if (process.env.NODE_ENV === 'development') {
+		console.error(err);
+	}
 	return res.status(statusCode).json({
 		success: false,
 		message,
