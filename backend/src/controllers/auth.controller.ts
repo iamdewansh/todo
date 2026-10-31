@@ -289,9 +289,6 @@ const loginWithGoogle = asyncHandler(async (req, res) => {
 	const { verifier, challenge } = createPkce();
 	const txnId = randomToken(32);
 
-	console.log('verifier :>> ', verifier);
-	console.log('txnId :>> ', txnId);
-
 	const resu = await redisClient.set(
 		`oauth:${txnId}`,
 		JSON.stringify(verifier),
@@ -303,7 +300,6 @@ const loginWithGoogle = asyncHandler(async (req, res) => {
 			condition: 'NX',
 		},
 	);
-	console.log('resu :>> ', resu);
 
 	res.cookie('TX_ID', txnId, transactionCookieOptions);
 
@@ -313,19 +309,13 @@ const loginWithGoogle = asyncHandler(async (req, res) => {
 		code_challenge: challenge,
 		code_challenge_method: 's256',
 	});
-	console.log('params :>> ', params);
 	const authUrl = `${process.env.SUPABASE_URL}/auth/v1/authorize?${params.toString()}`;
-	console.log('authUrl :>> ', authUrl);
 	res.redirect(authUrl);
 });
 
 const oauthCallback = asyncHandler(async (req, res) => {
 	const txnId = req.cookies?.TX_ID;
 	const code = req.query?.code;
-
-	console.log('in oauth callback');
-	console.log('txnId :>> ', txnId);
-	console.log('code :>> ', code);
 
 	if (!txnId || typeof code !== 'string') {
 		res.clearCookie('TX_ID', transactionCookieOptions);
