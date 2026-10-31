@@ -162,8 +162,6 @@ const forgotPassword = asyncHandler(async (req, res) => {
 		throw new ApiError(400, 'Email is missing');
 	}
 	const { verifier, challenge } = createPkce();
-	console.log('verifier :>> ', verifier);
-	console.log('challenge :>> ', challenge);
 	const txn_id = randomToken(32);
 	const result = await redisClient.set(`reset:${txn_id}`, verifier, {
 		expiration: {
@@ -172,8 +170,6 @@ const forgotPassword = asyncHandler(async (req, res) => {
 		},
 		condition: 'NX',
 	});
-
-	console.log('result: ', result);
 
 	const redirectTo = `${process.env.BACKEND_URL}/auth/reset/callback`;
 	const response = await fetch(
@@ -195,9 +191,7 @@ const forgotPassword = asyncHandler(async (req, res) => {
 	if (!response.ok) {
 		throw new ApiError(400, 'Unable to request password reset');
 	}
-	console.log('response :>> ', await response.json());
-	console.log('txnId:>> ', txn_id);
-	console.log('codeVerifier>>', verifier);
+
 	res.cookie('TX_ID', txn_id, transactionCookieOptions);
 	return res
 		.status(200)
@@ -211,17 +205,13 @@ const forgotPassword = asyncHandler(async (req, res) => {
 });
 
 const resetCallback = asyncHandler(async (req, res) => {
-	console.log('----------------in callback----------------');
 	const { code } = req.query;
-	console.log(req.query);
 	const txnId = req.cookies?.TX_ID;
-	console.log('txnId:>> ', txnId);
 
 	if (!code || !txnId) {
 		throw new ApiError(401, 'Invalid request');
 	}
 	const codeVerifier = await redisClient.getDel(`reset:${txnId}`);
-	console.log('codeVerifier>>', codeVerifier);
 
 	if (!codeVerifier) {
 		throw new ApiError(400, 'Unable to process request');
@@ -242,7 +232,6 @@ const resetCallback = asyncHandler(async (req, res) => {
 	);
 
 	const tokens = await tokenResponse.json();
-	console.log('tokens :>> ', tokens);
 	if (!tokenResponse.ok || !tokens.access_token || !tokens.refresh_token) {
 		throw new ApiError(401, 'Authentication Failed');
 	}
@@ -261,13 +250,11 @@ const resetCallback = asyncHandler(async (req, res) => {
 });
 
 const resetPassword = asyncHandler(async (req, res) => {
-	console.log('----------------in reset ----------------');
 	const { password } = req.body;
-	console.log('cookies ', req.cookies);
+	const access_token = req.cookies?.accessToken;
 	if (!password) {
 		throw new ApiError(400, 'Password is missing');
 	}
-	const access_token = req.cookies?.accessToken;
 	if (!access_token) {
 		throw new ApiError(400, 'Invalid request');
 	}
@@ -284,7 +271,6 @@ const resetPassword = asyncHandler(async (req, res) => {
 		}),
 	});
 	const result = await response.json();
-	console.log(result);
 	if (!response.ok) {
 		throw new ApiError(400, 'Unable to update password');
 	}
