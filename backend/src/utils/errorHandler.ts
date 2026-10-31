@@ -9,7 +9,10 @@ const errorHandler: ErrorRequestHandler = async (err, req, res, next) => {
 	}
 	return res.status(statusCode).json({
 		success: false,
-		message,
+		message:
+			process.env.NODE_ENV === 'development'
+				? err.message
+				: 'Internal Server Error',
 		...(process.env.NODE_ENV !== 'production' && {
 			stack: err.stack,
 		}),
