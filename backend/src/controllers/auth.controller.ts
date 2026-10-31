@@ -260,6 +260,45 @@ const resetCallback = asyncHandler(async (req, res) => {
 	return res.redirect(`${process.env.FRONTEND_URL}/reset-password`);
 });
 
+const resetPassword = asyncHandler(async (req, res) => {
+	console.log('----------------in reset ----------------');
+	const { password } = req.body;
+	console.log('cookies ', req.cookies);
+	if (!password) {
+		throw new ApiError(400, 'Password is missing');
+	}
+	const access_token = req.cookies?.accessToken;
+	if (!access_token) {
+		throw new ApiError(400, 'Invalid request');
+	}
+
+	const response = await fetch(`${process.env.SUPABASE_URL}/auth/v1/user`, {
+		method: 'PUT',
+		headers: {
+			'Content-Type': 'application/json',
+			apikey: process.env.SUPABASE_PUBLISHABLE_KEY!,
+			Authorization: `Bearer ${access_token}`,
+		},
+		body: JSON.stringify({
+			password,
+		}),
+	});
+	const result = await response.json();
+	console.log(result);
+	if (!response.ok) {
+		throw new ApiError(400, 'Unable to update password');
+	}
+	const { full_name, avatar_url, email, email_verified } =
+		result.user_metadata;
+	res.json(
+		new ApiResponse(
+			200,
+			{ full_name, avatar_url, email, email_verified },
+			'Password updated successfully',
+		),
+	);
+});
+
 const loginWithGoogle = asyncHandler(async (req, res) => {
 	const { verifier, challenge } = createPkce();
 	const txnId = randomToken(32);
@@ -355,4 +394,5 @@ export {
 	refreshAccessToken,
 	forgotPassword,
 	resetCallback,
+	resetPassword,
 };
