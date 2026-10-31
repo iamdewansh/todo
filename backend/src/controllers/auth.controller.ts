@@ -156,6 +156,60 @@ const transactionCookieOptions: CookieOptions = {
 	maxAge: 10 * 60 * 1000,
 };
 
+const forgotPassword = asyncHandler(async (req, res) => {
+	const { email } = req.body;
+	if (!email) {
+		throw new ApiError(400, 'Email is missing');
+	}
+	const { verifier, challenge } = createPkce();
+	console.log('verifier :>> ', verifier);
+	console.log('challenge :>> ', challenge);
+	const txn_id = randomToken(32);
+	const result = await redisClient.set(`reset:${txn_id}`, verifier, {
+		expiration: {
+			type: 'EX',
+			value: 600,
+		},
+		condition: 'NX',
+	});
+
+	console.log('result: ', result);
+
+	const redirectTo = `${process.env.BACKEND_URL}/auth/reset/callback`;
+	const response = await fetch(
+		`${process.env.SUPABASE_URL}/auth/v1/recover?redirect_to=${encodeURIComponent(redirectTo)}`,
+		{
+			method: 'POST',
+			headers: {
+				apikey: process.env.SUPABASE_PUBLISHABLE_KEY!,
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({
+				email,
+				code_challenge: challenge,
+				code_challenge_method: 's256',
+			}),
+		},
+	);
+
+	if (!response.ok) {
+		throw new ApiError(400, 'Unable to request password reset');
+	}
+	console.log('response :>> ', await response.json());
+	console.log('txnId:>> ', txn_id);
+	console.log('codeVerifier>>', verifier);
+	res.cookie('TX_ID', txn_id, transactionCookieOptions);
+	return res
+		.status(200)
+		.json(
+			new ApiResponse(
+				200,
+				null,
+				'If the account exists, a recovery email will be sent.',
+			),
+		);
+});
+
 const loginWithGoogle = asyncHandler(async (req, res) => {
 	const { verifier, challenge } = createPkce();
 	const txnId = randomToken(32);
@@ -194,9 +248,9 @@ const oauthCallback = asyncHandler(async (req, res) => {
 	const txnId = req.cookies?.TX_ID;
 	const code = req.query?.code;
 
-	// console.log('in oauth callback');
-	// console.log('txnId :>> ', txnId);
-	// console.log('code :>> ', code);
+	console.log('in oauth callback');
+	console.log('txnId :>> ', txnId);
+	console.log('code :>> ', code);
 
 	if (!txnId || typeof code !== 'string') {
 		res.clearCookie('TX_ID', transactionCookieOptions);
@@ -249,4 +303,5 @@ export {
 	loginWithGoogle,
 	oauthCallback,
 	refreshAccessToken,
+	forgotPassword,
 };
