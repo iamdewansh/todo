@@ -210,6 +210,56 @@ const forgotPassword = asyncHandler(async (req, res) => {
 		);
 });
 
+const resetCallback = asyncHandler(async (req, res) => {
+	console.log('----------------in callback----------------');
+	const { code } = req.query;
+	console.log(req.query);
+	const txnId = req.cookies?.TX_ID;
+	console.log('txnId:>> ', txnId);
+
+	if (!code || !txnId) {
+		throw new ApiError(401, 'Invalid request');
+	}
+	const codeVerifier = await redisClient.getDel(`reset:${txnId}`);
+	console.log('codeVerifier>>', codeVerifier);
+
+	if (!codeVerifier) {
+		throw new ApiError(400, 'Unable to process request');
+	}
+	const tokenResponse = await fetch(
+		`${process.env.SUPABASE_URL}/auth/v1/token?grant_type=pkce`,
+		{
+			method: 'POST',
+			headers: {
+				apikey: process.env.SUPABASE_PUBLISHABLE_KEY!,
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({
+				auth_code: code,
+				code_verifier: codeVerifier,
+			}),
+		},
+	);
+
+	const tokens = await tokenResponse.json();
+	console.log('tokens :>> ', tokens);
+	if (!tokenResponse.ok || !tokens.access_token || !tokens.refresh_token) {
+		throw new ApiError(401, 'Authentication Failed');
+	}
+
+	res.clearCookie('TX_ID', transactionCookieOptions);
+	res.cookie('accessToken', tokens.access_token, {
+		...authCookieOptions,
+		maxAge: 60 * 60 * 1000, // 60 minutes
+	});
+	res.cookie('refreshToken', tokens.refresh_token, {
+		...authCookieOptions,
+		maxAge: 24 * 60 * 60 * 1000, // 1 day
+	});
+
+	return res.redirect(`${process.env.FRONTEND_URL}/reset-password`);
+});
+
 const loginWithGoogle = asyncHandler(async (req, res) => {
 	const { verifier, challenge } = createPkce();
 	const txnId = randomToken(32);
@@ -304,4 +354,5 @@ export {
 	oauthCallback,
 	refreshAccessToken,
 	forgotPassword,
+	resetCallback,
 };
