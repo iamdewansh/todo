@@ -28,7 +28,6 @@ const signUp = asyncHandler(async (req, res) => {
 	});
 
 	if (!response.ok) {
-		console.log(await response.json());
 		throw new ApiError(400, 'Failed to Signup');
 	}
 	const data = await response.json();
@@ -80,7 +79,6 @@ const login = asyncHandler(async (req, res) => {
 
 const logout = asyncHandler(async (req, res) => {
 	const { access_token: token } = req.cookies;
-	console.log(token);
 	if (!token) {
 		throw new ApiError(400, 'Token is missing');
 	}
@@ -324,8 +322,6 @@ const oauthCallback = asyncHandler(async (req, res) => {
 
 	const result = await redisClient.getDel(`oauth:${txnId}`);
 	const verifier = result ? JSON.parse(result) : null;
-	console.log('result :>> ', result);
-	console.log('verifier :>> ', verifier);
 	if (!verifier) {
 		throw new ApiError(400, 'OAuth transaction expired');
 	}
@@ -344,7 +340,6 @@ const oauthCallback = asyncHandler(async (req, res) => {
 	);
 
 	const tokens = await tokenResponse.json();
-	console.log('tokens :>> ', tokens);
 	if (!tokenResponse.ok || !tokens.access_token || !tokens.refresh_token) {
 		throw new ApiError(401, 'Authentication Failed');
 	}
