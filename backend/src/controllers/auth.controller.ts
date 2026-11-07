@@ -287,7 +287,7 @@ const loginWithGoogle = asyncHandler(async (req, res) => {
 	const { verifier, challenge } = createPkce();
 	const txnId = randomToken(32);
 
-	const resu = await redisClient.set(
+	await redisClient.set(
 		`oauth:${txnId}`,
 		JSON.stringify(verifier),
 		{
