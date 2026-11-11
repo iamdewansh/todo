@@ -161,7 +161,7 @@ const forgotPassword = asyncHandler(async (req, res) => {
 	}
 	const { verifier, challenge } = createPkce();
 	const txn_id = randomToken(32);
-	const result = await redisClient.set(`reset:${txn_id}`, verifier, {
+	await redisClient.set(`reset:${txn_id}`, verifier, {
 		expiration: {
 			type: 'EX',
 			value: 600,
@@ -287,17 +287,13 @@ const loginWithGoogle = asyncHandler(async (req, res) => {
 	const { verifier, challenge } = createPkce();
 	const txnId = randomToken(32);
 
-	await redisClient.set(
-		`oauth:${txnId}`,
-		JSON.stringify(verifier),
-		{
-			expiration: {
-				type: 'EX',
-				value: 600,
-			},
-			condition: 'NX',
+	await redisClient.set(`oauth:${txnId}`, JSON.stringify(verifier), {
+		expiration: {
+			type: 'EX',
+			value: 600,
 		},
-	);
+		condition: 'NX',
+	});
 
 	res.cookie('TX_ID', txnId, transactionCookieOptions);
 
