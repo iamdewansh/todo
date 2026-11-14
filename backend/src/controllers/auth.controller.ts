@@ -155,7 +155,7 @@ const transactionCookieOptions: CookieOptions = {
 };
 
 const forgotPassword = asyncHandler(async (req, res) => {
-	const { email } = req.body;
+	const email = req.body?.email;
 	if (!email) {
 		throw new ApiError(400, 'Email is missing');
 	}
@@ -191,15 +191,13 @@ const forgotPassword = asyncHandler(async (req, res) => {
 	}
 
 	res.cookie('TX_ID', txn_id, transactionCookieOptions);
-	return res
-		.status(200)
-		.json(
-			new ApiResponse(
-				200,
-				null,
-				'If the account exists, a recovery email will be sent.',
-			),
-		);
+
+	return new ApiResponse(
+		200,
+		null,
+		'If the account exists, a recovery email will be sent.',
+	).send(res);
+
 });
 
 const resetCallback = asyncHandler(async (req, res) => {
