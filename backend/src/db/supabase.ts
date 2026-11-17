@@ -5,8 +5,11 @@ const pool = new Pool({
 	connectionTimeoutMillis: 10000,
 });
 
-pool.connect().then(() => {
-	console.log('db connected');
+pool.on('connect', () => {
+	console.log('Connected to PostgreSQL');
 });
-
+pool.on('error', (err) => {
+	console.error('Unexpected database error:', err);
+});
+pool.connect()
 export default pool;
