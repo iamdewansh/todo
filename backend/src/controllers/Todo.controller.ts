@@ -15,4 +15,6 @@ const viewTodos = asyncHandler(async (req, res) => {
 	return new ApiResponse(200, response.rows).send(res);
 });
 
+const addTodo = asyncHandler(async (req, res) => {});
+
 export { viewTodos };
