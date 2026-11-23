@@ -55,4 +55,20 @@ const deleteTodo = asyncHandler(async (req, res) => {
 	return new ApiResponse(200, null, 'todo removed successfully').send(res);
 });
 
-export { viewTodos, addTodo, toggleCompletionStatus, deleteTodo };
+const editTodo = asyncHandler(async (req, res) => {
+	const task = req.body?.task;
+	const todoId = req.body?.todoId;
+	const priority = req.body?.priority;
+	const userId = req.user?.sub;
+
+	if (!task || !priority || !todoId || !userId) {
+		throw new ApiError(403, 'Invalid input');
+	}
+	await pool.query(
+		`update public.todos set task = $1, priority = $2  where id = $3 and owner = $4 `,
+		[task, priority, todoId, userId],
+	);
+	return new ApiResponse(200, null, 'Task updated').send(res);
+});
+
+export { viewTodos, addTodo, toggleCompletionStatus, deleteTodo, editTodo };
