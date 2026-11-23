@@ -9,7 +9,7 @@ const viewTodos = asyncHandler(async (req, res) => {
 		throw new ApiError(404, 'Not Found');
 	}
 	const response = await pool.query(
-		`select * from public.todos where owner = $1`,
+		`select id,task,created_at,completed from public.todos where owner = $1`,
 		[userId],
 	);
 	return new ApiResponse(200, response.rows).send(res);
