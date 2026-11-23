@@ -30,4 +30,19 @@ const addTodo = asyncHandler(async (req, res) => {
 	return new ApiResponse(200, null, 'todo added successfully').send(res);
 });
 
-export { viewTodos, addTodo };
+const toggleCompletionStatus = asyncHandler(async (req, res) => {
+	const todoId = req.body?.todoId;
+	const status = req.body?.status;
+	const userId = req.user?.sub;
+	if (!todoId || status === undefined || !userId) {
+		throw new ApiError(400, 'Invalid request');
+	}
+
+	await pool.query(
+		`update public.todos set completed = $1 where id = $2 and owner = $3`,
+		[status, todoId, userId],
+	);
+	return new ApiResponse(200, null, 'Task completed').send(res);
+});
+
+export { viewTodos, addTodo, toggleCompletionStatus };
