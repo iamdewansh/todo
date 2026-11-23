@@ -45,4 +45,13 @@ const toggleCompletionStatus = asyncHandler(async (req, res) => {
 	return new ApiResponse(200, null, 'Task completed').send(res);
 });
 
-export { viewTodos, addTodo, toggleCompletionStatus };
+const deleteTodo = asyncHandler(async (req, res) => {
+	const todoId = req.body?.todoId;
+	if (!todoId) {
+		throw new ApiError(400, 'Invalid request');
+	}
+	await pool.query(`delete from public.todos where id = $1`, [todoId]);
+	return new ApiResponse(200, null, 'todo removed successfully').send(res);
+});
+
+export { viewTodos, addTodo, toggleCompletionStatus, deleteTodo };
