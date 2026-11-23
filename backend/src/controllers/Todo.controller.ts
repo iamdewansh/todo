@@ -9,7 +9,7 @@ const viewTodos = asyncHandler(async (req, res) => {
 		throw new ApiError(404, 'Not Found');
 	}
 	const response = await pool.query(
-		`select id,task,created_at,completed from public.todos where owner = $1`,
+		`select id,task,created_at,completed,priority from public.todos where owner = $1`,
 		[userId],
 	);
 	return new ApiResponse(200, response.rows).send(res);
@@ -17,15 +17,16 @@ const viewTodos = asyncHandler(async (req, res) => {
 
 const addTodo = asyncHandler(async (req, res) => {
 	const task = req.body?.task;
+	const priority = req.body?.priority;
 	const userId = req.user?.sub;
 
-	if (!task || !userId) {
+	if (!task || !priority || !userId) {
 		throw new ApiError(400, 'Invalid request');
 	}
 
 	await pool.query(
-		`insert into public.todos (task,completed,owner) values($1,$2,$3)`,
-		[task, false, userId],
+		`insert into public.todos (task,completed,owner,priority) values($1,$2,$3,$4)`,
+		[task, false, userId, priority],
 	);
 	return new ApiResponse(200, null, 'todo added successfully').send(res);
 });
