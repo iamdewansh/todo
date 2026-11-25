@@ -17,3 +17,5 @@ router.post('/add-todo', addTodo);
 router.patch('/toggle-completion-status', toggleCompletionStatus);
 router.put('/delete-todo', deleteTodo);
 router.put('/edit-todo', editTodo);
+
+export default router;
