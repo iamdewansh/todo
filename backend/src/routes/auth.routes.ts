@@ -28,3 +28,5 @@ router.post('/reset-password', resetPassword);
 // Google OAuth routes
 router.get('/auth/google', loginWithGoogle);
 router.get('/auth/callback', oauthCallback);
+
+export default router;
