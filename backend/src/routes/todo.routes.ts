@@ -10,8 +10,10 @@ import { Router } from 'express';
 
 const router: Router = Router();
 
-router.get('/getTodos', verifyToken, viewTodos);
-router.post('/addTodo', verifyToken, addTodo);
-router.patch('/toggleCompletionStatus', verifyToken, toggleCompletionStatus);
-router.put('/deleteTodo', verifyToken, deleteTodo);
-router.put('/editTodo', verifyToken, editTodo);
+router.use(verifyToken);
+
+router.get('/get-todos', viewTodos);
+router.post('/add-todo', addTodo);
+router.patch('/toggle-completion-status', toggleCompletionStatus);
+router.put('/delete-todo', deleteTodo);
+router.put('/edit-todo', editTodo);
