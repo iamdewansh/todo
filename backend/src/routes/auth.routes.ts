@@ -1,14 +1,23 @@
-import { Router } from "express";
-import { forgotPassword, login, loginWithGoogle, logout, oauthCallback, refreshAccessToken, resetCallback, resetPassword, signUp } from "../controllers/auth.controller.js";
-import { verifyToken } from "../middleware/auth.middleware.js";
-import { addTodo, deleteTodo, editTodo, toggleCompletionStatus, viewTodos } from "../controllers/Todo.controller.js";
-const router:Router  =Router()
+import { Router } from 'express';
+import {
+	forgotPassword,
+	login,
+	loginWithGoogle,
+	logout,
+	oauthCallback,
+	refreshAccessToken,
+	resetCallback,
+	resetPassword,
+	signUp,
+} from '../controllers/auth.controller.js';
+
+const router: Router = Router();
 
 router.post('/signup', signUp);
 router.post('/login', login);
 router.post('/logout', logout);
 
-// Refreshing tokens 
+// Refreshing tokens
 router.post('/refresh-tokens', refreshAccessToken);
 
 // Forgot password routes
