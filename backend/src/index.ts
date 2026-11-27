@@ -1,11 +1,9 @@
 import 'dotenv/config';
 import app from './app.js';
-
 import cors from 'cors';
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import { errorHandler } from './utils/errorHandler.js';
-
 import authRouter from './routes/auth.routes.js';
 import todoRouter from './routes/todo.routes.js';
 
