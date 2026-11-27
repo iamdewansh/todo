@@ -29,9 +29,9 @@
    --destructive-hover: #450a0a;
 
    /* Radius */
-   --radius-sm: 4px;
+   --radius-small: 4px;
    --radius: 6px;
-   --radius-lg: 8px;
+   --radius-large: 8px;
 
    /* Spacing */
    --space-1: 4px;
@@ -87,9 +87,9 @@
    --color-destructive-hover: var(--destructive-hover);
 
    /* Radius */
-   --radius-sm: var(--radius-sm);
+   --radius-sm: var(--radius-small);
    --radius-md: var(--radius);
-   --radius-lg: var(--radius-lg);
+   --radius-lg: var(--radius-large);
 
    /* Spacing */
    --spacing-space-1: var(--space-1);
